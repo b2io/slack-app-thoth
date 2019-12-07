@@ -1,0 +1,21 @@
+service: slack-app-thoth
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 128
+  environment:
+    SLACK_BOT_TOKEN: ${env:SLACK_BOT_TOKEN}
+    SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
+
+functions:
+  thoth:
+    handler: src/thoth.handler
+    events:
+      - http:
+          method: post
+          path: /slack/events
