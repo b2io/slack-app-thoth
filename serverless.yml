@@ -2,20 +2,59 @@ service: slack-app-thoth
 
 plugins:
   - serverless-dotenv-plugin
+  - serverless-dynamodb-local
   - serverless-offline
+
+custom:
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+    migration:
+      dir: offline/migrations
+    stages:
+      - ${opt:stage, self:provider.stage}
 
 provider:
   name: aws
+  region: ${opt:region, 'us-east-2'}
   runtime: nodejs12.x
-  memorySize: 128
   environment:
+    TODOS_TABLE: ${self:service}-${opt:stage, self:provider.stage}-todos
     SLACK_BOT_TOKEN: ${env:SLACK_BOT_TOKEN}
     SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}'
 
 functions:
   thoth:
     handler: src/thoth.handler
+    memorySize: 128
     events:
       - http:
           method: post
           path: /slack/events
+
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.TODOS_TABLE}
