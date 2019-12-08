@@ -13,6 +13,8 @@ custom:
       migrate: true
     migration:
       dir: offline/migrations
+    stages:
+      - ${opt:stage, self:provider.stage}
 
 provider:
   name: aws

@@ -1,12 +1,15 @@
 const { App, ExpressReceiver, LogLevel } = require('@slack/bolt');
 const { createServer, proxy } = require('aws-serverless-express');
 
+const smartAdd = require('./smart-add');
+const todos = require('./todos');
+
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
 const app = new App({
-  logLevel: LogLevel.DEBUG,
+  logLevel: process.env.IS_OFFLINE ? LogLevel.DEBUG : LogLevel.WARN,
   receiver,
   token: process.env.SLACK_BOT_TOKEN,
 });
@@ -14,9 +17,22 @@ const app = new App({
 app.command('/todo', async ({ ack, command, respond }) => {
   ack();
   if (command.text.startsWith('add ')) {
-    // TODO: [DM] Attempt to create a TODO based on the command text.
-    // TODO: [DM] How should Thoth respond if success/failure cases?
-    respond({ response_type: 'ephemeral', text: 'add' });
+    try {
+      const input = command.text.replace(/^add /, '');
+      const todo = smartAdd(input);
+
+      const id = await todos.create(todo);
+
+      respond({
+        response_type: 'ephemeral',
+        text: `:heavy_check_mark: Created TODO "${input}"`,
+      });
+    } catch (error) {
+      respond({
+        response_type: 'ephemeral',
+        text: `:rotating_light: ${error}`,
+      });
+    }
   } else {
     respond({
       blocks: [
@@ -27,7 +43,34 @@ app.command('/todo', async ({ ack, command, respond }) => {
           },
           type: 'section',
         },
-        // TODO: [DM] Add explanation of `/todo add` into `/todo` help text.
+        {
+          text: {
+            text: `Use \`/todo\` to keep track of your TODOs. Some examples include:`,
+            type: 'mrkdwn',
+          },
+          type: 'section',
+        },
+        {
+          text: {
+            text: `- \`/todo add Pick up the milk\``,
+            type: 'mrkdwn',
+          },
+          type: 'section',
+        },
+        {
+          text: {
+            text: `- \`/todo add Stand-up meeting #ProjectName\``,
+            type: 'mrkdwn',
+          },
+          type: 'section',
+        },
+        {
+          text: {
+            text: `- \`/todo add Emergency bug fix #ProjectName %in-progress\``,
+            type: 'mrkdwn',
+          },
+          type: 'section',
+        },
       ],
       response_type: 'ephemeral',
     });

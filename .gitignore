@@ -1,3 +1,4 @@
+.dynamodb
 .env
 .serverless
 node_modules
