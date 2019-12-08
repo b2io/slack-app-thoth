@@ -13,15 +13,24 @@ const app = new App({
 
 app.command('/todo', async ({ ack, command, respond }) => {
   ack();
-  respond({
-    blocks: [
-      {
-        text: { text: `\`/todo ${command.text}\``, type: 'mrkdwn' },
-        type: 'section',
-      },
-    ],
-    response_type: 'ephemeral',
-  });
+  if (command.text.startsWith('add ')) {
+    // TODO: [DM] Attempt to create a TODO based on the command text.
+    // TODO: [DM] How should Thoth respond if success/failure cases?
+  } else {
+    respond({
+      blocks: [
+        {
+          text: {
+            text: `:wave: Need some help with \`/todo\`?`,
+            type: 'mrkdwn',
+          },
+          type: 'section',
+        },
+        // TODO: [DM] Add explanation of `/todo add` into `/todo` help text.
+      ],
+      response_type: 'ephemeral',
+    });
+  }
 });
 
 app.error(error => {
