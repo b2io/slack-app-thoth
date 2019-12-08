@@ -16,6 +16,7 @@
     "serverless-offline": "^5.12.1"
   },
   "scripts": {
+    "dev": "serverless offline start",
     "test": "jest"
   }
 }

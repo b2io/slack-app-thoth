@@ -3,6 +3,7 @@ const { createServer, proxy } = require('aws-serverless-express');
 
 const smartAdd = require('./smart-add');
 const todos = require('./todos');
+const todosReport = require('./todos-report');
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -27,6 +28,29 @@ app.command('/todo', async ({ ack, command, respond }) => {
         response_type: 'ephemeral',
         text: `:heavy_check_mark: Created TODO "${input}"`,
       });
+    } catch (error) {
+      respond({
+        response_type: 'ephemeral',
+        text: `:rotating_light: ${error}`,
+      });
+    }
+  } else if (command.text.trim() === 'report') {
+    try {
+      const userTodos = await todos.all(command.user_id);
+
+      if (userTodos.length === 0) {
+        respond({
+          response_type: 'ephemeral',
+          text: `You don't currently have any TODOs.`,
+        });
+      } else {
+        respond({
+          response_type: 'ephemeral',
+          // TODO: [DM] Improve response text from Thoth.
+          // TODO: [DM] Add action to send in the channel if that's possible.
+          text: todosReport(userTodos),
+        });
+      }
     } catch (error) {
       respond({
         response_type: 'ephemeral',
@@ -71,6 +95,7 @@ app.command('/todo', async ({ ack, command, respond }) => {
           },
           type: 'section',
         },
+        // TODO: [DM] Add help output for todo::report sub-command.
       ],
       response_type: 'ephemeral',
     });

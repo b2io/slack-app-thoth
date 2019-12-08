@@ -2,7 +2,26 @@ const nanoid = require('nanoid');
 
 const db = require('./db');
 
-const STATUS = { DONE: 'done', IN_PROGRESS: 'in-progress', TODO: 'todo' };
+const TABLE_NAME = process.env.TODOS_TABLE;
+
+const all = userId =>
+  new Promise((resolve, reject) => {
+    db.query(
+      {
+        ExpressionAttributeValues: { ':createdBy': userId },
+        IndexName: 'createdByIndex',
+        KeyConditionExpression: 'createdBy = :createdBy',
+        TableName: TABLE_NAME,
+      },
+      (error, data) => {
+        if (error) {
+          reject('Unable to query TODOs');
+        }
+
+        resolve(data.Items);
+      },
+    );
+  });
 
 const create = ({ createdBy, description, status, tag }) =>
   new Promise((resolve, reject) => {
@@ -17,7 +36,7 @@ const create = ({ createdBy, description, status, tag }) =>
       updatedAt: createdAt,
     };
 
-    db.put({ Item: todo, TableName: process.env.TODOS_TABLE }, error => {
+    db.put({ Item: todo, TableName: TABLE_NAME }, error => {
       if (error) {
         reject('Unable to create TODO');
       }
@@ -26,4 +45,4 @@ const create = ({ createdBy, description, status, tag }) =>
     });
   });
 
-module.exports = { create, STATUS };
+module.exports = { all, create };

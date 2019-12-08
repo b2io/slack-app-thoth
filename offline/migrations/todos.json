@@ -1,21 +1,22 @@
 {
   "Table": {
     "TableName": "slack-app-thoth-dev-todos",
-    "KeySchema": [
-      {
-        "AttributeName": "id",
-        "KeyType": "HASH"
-      }
-    ],
+    "KeySchema": [{ "AttributeName": "id", "KeyType": "HASH" }],
     "AttributeDefinitions": [
+      { "AttributeName": "createdBy", "AttributeType": "S" },
+      { "AttributeName": "id", "AttributeType": "S" }
+    ],
+    "GlobalSecondaryIndexes": [
       {
-        "AttributeName": "id",
-        "AttributeType": "S"
+        "IndexName": "createdByIndex",
+        "KeySchema": [{ "AttributeName": "createdBy", "KeyType": "HASH" }],
+        "Projection": { "ProjectionType": "ALL" },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
       }
     ],
-    "ProvisionedThroughput": {
-      "ReadCapacityUnits": 1,
-      "WriteCapacityUnits": 1
-    }
+    "ProvisionedThroughput": { "ReadCapacityUnits": 1, "WriteCapacityUnits": 1 }
   }
 }
