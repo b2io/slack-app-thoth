@@ -16,6 +16,7 @@ app.command('/todo', async ({ ack, command, respond }) => {
   if (command.text.startsWith('add ')) {
     // TODO: [DM] Attempt to create a TODO based on the command text.
     // TODO: [DM] How should Thoth respond if success/failure cases?
+    respond({ response_type: 'ephemeral', text: 'add' });
   } else {
     respond({
       blocks: [
