@@ -10,7 +10,7 @@ test.each([
     },
   ],
   [
-    'Review PRs #ProjectName',
+    'Review PRs +ProjectName',
     {
       description: 'Review PRs',
       status: 'todo',
@@ -18,7 +18,7 @@ test.each([
     },
   ],
   [
-    '#ProjectName Review PRs',
+    '+ProjectName Review PRs',
     {
       description: 'Review PRs',
       status: 'todo',
@@ -26,7 +26,7 @@ test.each([
     },
   ],
   [
-    'Review #ProjectName PRs',
+    'Review +ProjectName PRs',
     {
       description: 'Review PRs',
       status: 'todo',
@@ -66,7 +66,7 @@ test.each([
     },
   ],
   [
-    'Write blog article #ProjectName %in-progress',
+    'Write blog article +ProjectName %in-progress',
     {
       description: 'Write blog article',
       status: 'in-progress',
@@ -74,7 +74,7 @@ test.each([
     },
   ],
   [
-    '#ProjectName Write blog article %in-progress',
+    '+ProjectName Write blog article %in-progress',
     {
       description: 'Write blog article',
       status: 'in-progress',
@@ -82,7 +82,7 @@ test.each([
     },
   ],
   [
-    '#ProjectName %in-progress Write blog article ',
+    '+ProjectName %in-progress Write blog article ',
     {
       description: 'Write blog article',
       status: 'in-progress',
@@ -90,7 +90,7 @@ test.each([
     },
   ],
   [
-    '#ProjectName Write %in-progress blog article ',
+    '+ProjectName Write %in-progress blog article ',
     {
       description: 'Write blog article',
       status: 'in-progress',

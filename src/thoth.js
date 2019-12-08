@@ -59,14 +59,14 @@ app.command('/todo', async ({ ack, command, respond }) => {
         },
         {
           text: {
-            text: `- \`/todo add Stand-up meeting #ProjectName\``,
+            text: `- \`/todo add Stand-up meeting +ProjectName\``,
             type: 'mrkdwn',
           },
           type: 'section',
         },
         {
           text: {
-            text: `- \`/todo add Emergency bug fix #ProjectName %in-progress\``,
+            text: `- \`/todo add Emergency bug fix +ProjectName %in-progress\``,
             type: 'mrkdwn',
           },
           type: 'section',

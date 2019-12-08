@@ -1,5 +1,5 @@
 const STATUS_MATCH = /\s*%([^\s]+)\s*/;
-const TAG_MATCH = /\s*#([^\s]+)\s*/;
+const TAG_MATCH = /\s*\+([^\s]+)\s*/;
 
 const identity = v => v;
 
