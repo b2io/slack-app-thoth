@@ -21,7 +21,7 @@ app.command('/todo', async ({ ack, command, respond }) => {
       const input = command.text.replace(/^add /, '');
       const todo = smartAdd(input);
 
-      const id = await todos.create(todo);
+      const id = await todos.create({ ...todo, createdBy: command.user_id });
 
       respond({
         response_type: 'ephemeral',
