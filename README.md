@@ -4,6 +4,7 @@
 
 - Install global tools: `npm i -g ngrok serverless`
 - Install project dependencies: `npm i`
+- Setup DynamoDB locally: `serverless dynamodb install`
 - Copy `.env.example` to `.env` and enter your `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`
 
 ## Local Development
