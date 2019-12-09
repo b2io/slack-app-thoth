@@ -1,18 +1,28 @@
 const Todo = require('../models/todo');
 const todoCommand = require('./todo');
 
-const stubCall = ({ text = '', userId = 'U0' } = {}) => {
+const stubCall = ({
+  text = '',
+  trigger_id = 'TRIGGER#0',
+  user_id = 'USER#0',
+} = {}) => {
   const ack = jest.fn();
   const respond = jest.fn();
   const say = jest.fn();
 
-  return { ack, command: { text, user_id: userId }, respond, say };
+  return {
+    ack,
+    command: { text, user_id },
+    payload: { trigger_id },
+    respond,
+    say,
+  };
 };
 
 jest.mock('../models/todo', () => {
   return {
     all: jest.fn(() => Promise.resolve([])),
-    create: jest.fn(() => Promise.resolve('T0')),
+    create: jest.fn(() => Promise.resolve('TODO#0')),
   };
 });
 
@@ -41,13 +51,13 @@ describe('/todo add', () => {
   test('should allow for smart-add syntax', async () => {
     const call = stubCall({
       text: 'add Emergency bugfix +ProjectName %in-progress',
-      userId: 'U1',
+      user_id: 'USER#1',
     });
 
     await todoCommand(call);
 
     expect(Todo.create).toHaveBeenCalledWith({
-      createdBy: 'U1',
+      createdBy: 'USER#1',
       description: 'Emergency bugfix',
       status: 'in-progress',
       tag: 'ProjectName',
