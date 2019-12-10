@@ -124,18 +124,30 @@ describe('/todo report', () => {
         tag: 'Project1',
       },
     ]);
-
-    await todoCommand(call);
-
-    expect(call.respond).toHaveBeenCalledWith({
-      response_type: 'ephemeral',
-      text: `
+    const expectedText = `
 - [ ] Pick up the milk
 - [x] Take out the trash
 - [-] Project1 - Work on CCPA updates
 - [-] Project1 - Work on GDPR updates
 - [ ] Project1 - Stand-up meeting
-            `.trim(),
+                  `.trim();
+
+    await todoCommand(call);
+
+    expect(call.respond).toHaveBeenCalledWith({
+      blocks: [
+        {
+          accessory: {
+            action_id: 'todo-report-publish',
+            text: { text: 'Post', type: 'plain_text' },
+            type: 'button',
+            value: expectedText,
+          },
+          text: { text: expectedText, type: 'mrkdwn' },
+          type: 'section',
+        },
+      ],
+      response_type: 'ephemeral',
     });
   });
 });

@@ -1,9 +1,7 @@
 const noop = () => {};
 
 const command = (name, subCommands, defaultSubCommand = noop) => {
-  const handler = async ({ ack, ...api }) => {
-    ack();
-
+  const handler = async api => {
     const subCommand =
       subCommands.find(sc => sc.predicate(api)) || defaultSubCommand;
 

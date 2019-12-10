@@ -1,4 +1,4 @@
-const { subCommand } = require('../../commands/util');
+const { action, subCommand } = require('../../commands/util');
 const Todo = require('../../models/todo');
 
 const compareString = (a = '', b = '') => a.localeCompare(b);
@@ -33,7 +33,9 @@ const generateReport = todos =>
 
 module.exports = subCommand(
   ({ command }) => command.text.trim() === 'report',
-  async ({ command, respond }) => {
+  async ({ ack, command, respond }) => {
+    ack();
+
     try {
       const userTodos = await Todo.all(command.user_id);
 
@@ -43,11 +45,22 @@ module.exports = subCommand(
           text: `You don't currently have any TODOs`,
         });
       } else {
+        const reportText = generateReport(userTodos);
+
         respond({
+          blocks: [
+            {
+              accessory: {
+                action_id: 'todo-report-publish',
+                text: { text: 'Post', type: 'plain_text' },
+                type: 'button',
+                value: reportText,
+              },
+              text: { text: reportText, type: 'mrkdwn' },
+              type: 'section',
+            },
+          ],
           response_type: 'ephemeral',
-          // TODO: [DM] Improve response text from Thoth.
-          // TODO: [DM] Add action to send in the channel if that's possible.
-          text: generateReport(userTodos),
         });
       }
     } catch (error) {
@@ -57,4 +70,13 @@ module.exports = subCommand(
       });
     }
   },
+  action('todo-report-publish', async ({ ack, action, respond }) => {
+    ack();
+
+    respond({
+      delete_original: true,
+      response_type: 'in_channel',
+      text: action.value,
+    });
+  }),
 );

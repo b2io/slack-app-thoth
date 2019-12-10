@@ -24,7 +24,9 @@ const smartAdd = text => {
 
 module.exports = subCommand(
   ({ command }) => command.text.startsWith('add '),
-  async ({ command, respond }) => {
+  async ({ ack, command, respond }) => {
+    ack();
+
     try {
       const input = command.text.replace(/^add /, '');
       const todo = smartAdd(input);
