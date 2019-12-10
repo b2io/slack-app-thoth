@@ -6,7 +6,8 @@
     "@slack/bolt": "^1.4.1",
     "aws-sdk": "^2.585.0",
     "aws-serverless-express": "^3.3.6",
-    "nanoid": "^2.1.7"
+    "nanoid": "^2.1.7",
+    "pino": "^5.14.0"
   },
   "devDependencies": {
     "jest": "^24.9.0",

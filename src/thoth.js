@@ -16,7 +16,7 @@ const app = new App({
 todoCommand.register(app);
 
 app.error(error => {
-  console.error(error);
+  console.error(`[thoth]`, { error });
 });
 
 module.exports.handler = (event, context, callback) => {

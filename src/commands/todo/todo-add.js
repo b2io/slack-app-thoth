@@ -1,4 +1,5 @@
 const { subCommand } = require('../../commands/util');
+const logger = require('../../logger');
 const Todo = require('../../models/todo');
 
 const STATUS_MATCH = /\s*%([^\s]+)\s*/;
@@ -38,6 +39,12 @@ module.exports = subCommand(
         text: `:heavy_check_mark: Created TODO`,
       });
     } catch (error) {
+      logger.error(`[/todo add]`, {
+        error,
+        text: command.text,
+        userId: command.user_id,
+      });
+
       respond({
         response_type: 'ephemeral',
         text: `:rotating_light: ${error.message}`,

@@ -1,4 +1,5 @@
 const { action, subCommand } = require('../../commands/util');
+const logger = require('../../logger');
 const Todo = require('../../models/todo');
 
 const compareString = (a = '', b = '') => a.localeCompare(b);
@@ -64,9 +65,11 @@ module.exports = subCommand(
         });
       }
     } catch (error) {
+      logger.error(`[/todo report]`, { error, userId: command.user_id });
+
       respond({
         response_type: 'ephemeral',
-        text: `:rotating_light: ${error}`,
+        text: `:rotating_light: ${error.message}`,
       });
     }
   },
