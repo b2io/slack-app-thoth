@@ -76,10 +76,13 @@ module.exports = subCommand(
   action('todo-report-publish', async ({ ack, action, respond }) => {
     ack();
 
+    // TODO: [DM] Send the message as the user who triggered the action; rel: https://api.slack.com/methods/chat.postMessage
     respond({
+      as_user: false,
       delete_original: true,
       response_type: 'in_channel',
       text: action.value,
+      user: action.user.name,
     });
   }),
 );
