@@ -29,11 +29,11 @@ module.exports = subCommand(
       const input = command.text.replace(/^add /, '');
       const todo = smartAdd(input);
 
-      const id = await Todo.create({ ...todo, createdBy: command.user_id });
+      await Todo.create({ ...todo, createdBy: command.user_id });
 
       respond({
         response_type: 'ephemeral',
-        text: `:heavy_check_mark: Created TODO "${input}"`,
+        text: `:heavy_check_mark: Created TODO`,
       });
     } catch (error) {
       respond({

@@ -13,7 +13,7 @@ const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
 });
 
-app.command('/todo', todoCommand);
+todoCommand.register(app);
 
 app.error(error => {
   console.error(error);

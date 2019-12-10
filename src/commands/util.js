@@ -1,13 +1,38 @@
-const command = subCommands => async ({ ack, ...api }) => {
-  ack();
+const noop = () => {};
 
-  const subCommand = subCommands.find(sc => sc.predicate(api));
+const command = (name, subCommands, defaultSubCommand = noop) => {
+  const handler = async ({ ack, ...api }) => {
+    ack();
 
-  if (subCommand) {
-    subCommand.execute(api);
-  }
+    const subCommand =
+      subCommands.find(sc => sc.predicate(api)) || defaultSubCommand;
+
+    subCommand(api);
+  };
+
+  handler.register = app => {
+    app.command(name, handler);
+    subCommands.forEach(subCommand => {
+      subCommand.actions.forEach(action => {
+        app.action(action.constraints, action);
+      });
+    });
+  };
+
+  return handler;
 };
 
-const subCommand = (predicate, execute) => ({ execute, predicate });
+const subCommand = (predicate, handler, ...actions) => {
+  handler.actions = actions;
+  handler.predicate = predicate;
 
-module.exports = { command, subCommand };
+  return handler;
+};
+
+const action = (constraints, handler) => {
+  handler.constraints = constraints;
+
+  return handler;
+};
+
+module.exports = { action, command, subCommand };

@@ -44,11 +44,11 @@ describe('/todo add', () => {
 
     expect(call.respond).toHaveBeenCalledWith({
       response_type: 'ephemeral',
-      text: `:heavy_check_mark: Created TODO "Stand-up meeting +ProjectName"`,
+      text: `:heavy_check_mark: Created TODO`,
     });
   });
 
-  test('should allow for smart-add syntax', async () => {
+  test('should create a TODO using smart-add syntax', async () => {
     const call = stubCall({
       text: 'add Emergency bugfix +ProjectName %in-progress',
       user_id: 'USER#1',
@@ -143,6 +143,17 @@ describe('/todo report', () => {
 describe('/todo help', () => {
   test('should respond to the user', async () => {
     const call = stubCall({ text: 'help' });
+
+    await todoCommand(call);
+
+    expect(call.respond).toHaveBeenCalledWith({
+      response_type: 'ephemeral',
+      text: ':wave: The `/todo` command is still a work-in-progress.',
+    });
+  });
+
+  test('should be the fallback sub-command', async () => {
+    const call = stubCall({ text: 'not-a-subcommand' });
 
     await todoCommand(call);
 
